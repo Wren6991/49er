@@ -10,7 +10,7 @@ def main(stdscr):
 
    x, y, h, v = 0, 0, 0, 0
 
-   clampx = lambda : min(x, len(lines[y])-1)
+   clampx, dedent = lambda : min(x, len(lines[y])-1), lambda : 3 if x == n and not x%3 else 1
 
    FUN = {curses.KEY_HOME:  (lambda : x, lambda x : (lines, 0, y)),
           curses.KEY_END:   (lambda : x, lambda x : (lines, len(lines[y])-1, y)),
@@ -21,7 +21,7 @@ def main(stdscr):
           curses.KEY_PPAGE: (lambda : x, lambda x : (lines, x, max(y-rows, 0))),
           curses.KEY_NPAGE: (lambda : x, lambda x : (lines, x, min(y+rows, len(lines)-1))),
           10:               (clampx,     lambda x : (lines[:y]+[lines[y][:x]+"\n", lines[y][x:]]+lines[y+1:], 0, y+1)),
-          127:              (clampx,     lambda x : (lines[:y]+[lines[y][:x-1]+lines[y][x:]]+lines[y+1:], x-1, y) if x > 0 else (lines[:y-1]+[lines[y-1][:-1]+lines[y]]+lines[y+1:], len(lines[y-1])-1, y-1) if y > 0 else (lines, x, y)),
+          127:              (clampx,     lambda x : (lines[:y]+[lines[y][:x-dedent()]+lines[y][x:]]+lines[y+1:], x-dedent(), y) if x > 0 else (lines[:y-1]+[lines[y-1][:-1]+lines[y]]+lines[y+1:], len(lines[y-1])-1, y-1) if y > 0 else (lines, x, y)),
           curses.KEY_DC:    (clampx,     lambda x : (lines[:y]+[lines[y][:x]+lines[y][x+1:]]+lines[y+1:], x, y) if x < len(lines[y])-1 else (lines[:y]+[lines[y][:-1]+lines[y+1]]+lines[y+2:], x, y) if y < len(lines)-1 else (lines, x, y))}
 
    try:
@@ -29,7 +29,7 @@ def main(stdscr):
          stdscr.clear()
          rows, cols = stdscr.getmaxyx()
 
-         h, v = max(min(h, clampx()), clampx()-cols+1), max(min(v, y), y-rows+1)
+         h, v, n = max(min(h, clampx()), clampx()-cols+1), max(min(v, y), y-rows+1), len(lines[y]) - len(lines[y].lstrip(" "))
 
          for i in range(min(rows, len(lines)-v)):
             stdscr.addstr(i, 0, lines[v+i][:-1][h:h+cols-(i==rows-1)])
