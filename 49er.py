@@ -12,17 +12,17 @@ def main(stdscr):
 
    clampx, dedent = lambda : min(x, len(lines[y])-1), lambda : 3 if x == n and not x%3 else 1
 
-   FUN = {curses.KEY_HOME:  (lambda : x, lambda x : (lines, 0, y)),
-          curses.KEY_END:   (lambda : x, lambda x : (lines, len(lines[y])-1, y)),
-          curses.KEY_LEFT:  (clampx,     lambda x : (lines, ) + ((x-1, y) if x > 0 else (len(lines[y-1])-1, y-1) if y > 0 else (x, y))),
-          curses.KEY_RIGHT: (clampx,     lambda x : (lines, ) + ((x+1, y) if x < len(lines[y])-1 else (0, y+1) if y < len(lines)-1 else (x, y))),
-          curses.KEY_UP:    (lambda : x, lambda x : (lines, x, max(y-1, 0))),
-          curses.KEY_DOWN:  (lambda : x, lambda x : (lines, x, min(y+1, len(lines)-1))),
-          curses.KEY_PPAGE: (lambda : x, lambda x : (lines, x, max(y-rows, 0))),
-          curses.KEY_NPAGE: (lambda : x, lambda x : (lines, x, min(y+rows, len(lines)-1))),
-          10:               (clampx,     lambda x : (lines[:y]+[lines[y][:x]+"\n", n * " " + lines[y][x:]]+lines[y+1:], n, y+1)),
-          127:              (clampx,     lambda x : (lines[:y]+[lines[y][:x-dedent()]+lines[y][x:]]+lines[y+1:], x-dedent(), y) if x > 0 else (lines[:y-1]+[lines[y-1][:-1]+lines[y]]+lines[y+1:], len(lines[y-1])-1, y-1) if y > 0 else (lines, x, y)),
-          curses.KEY_DC:    (clampx,     lambda x : (lines[:y]+[lines[y][:x]+lines[y][x+1:]]+lines[y+1:], x, y) if x < len(lines[y])-1 else (lines[:y]+[lines[y][:-1]+lines[y+1]]+lines[y+2:], x, y) if y < len(lines)-1 else (lines, x, y))}
+   FUN = {curses.KEY_HOME:      (lambda : x, lambda x : (lines, 0, y)),
+          curses.KEY_END:       (lambda : x, lambda x : (lines, len(lines[y])-1, y)),
+          curses.KEY_LEFT:      (clampx,     lambda x : (lines, ) + ((x-1, y) if x > 0 else (len(lines[y-1])-1, y-1) if y > 0 else (x, y))),
+          curses.KEY_RIGHT:     (clampx,     lambda x : (lines, ) + ((x+1, y) if x < len(lines[y])-1 else (0, y+1) if y < len(lines)-1 else (x, y))),
+          curses.KEY_UP:        (lambda : x, lambda x : (lines, x, max(y-1, 0))),
+          curses.KEY_DOWN:      (lambda : x, lambda x : (lines, x, min(y+1, len(lines)-1))),
+          curses.KEY_PPAGE:     (lambda : x, lambda x : (lines, x, max(y-rows, 0))),
+          curses.KEY_NPAGE:     (lambda : x, lambda x : (lines, x, min(y+rows, len(lines)-1))),
+          10:                   (clampx,     lambda x : (lines[:y]+[lines[y][:x]+"\n", n * " " + lines[y][x:]]+lines[y+1:], n, y+1)),
+          curses.KEY_BACKSPACE: (clampx,     lambda x : (lines[:y]+[lines[y][:x-dedent()]+lines[y][x:]]+lines[y+1:], x-dedent(), y) if x > 0 else (lines[:y-1]+[lines[y-1][:-1]+lines[y]]+lines[y+1:], len(lines[y-1])-1, y-1) if y > 0 else (lines, x, y)),
+          curses.KEY_DC:        (clampx,     lambda x : (lines[:y]+[lines[y][:x]+lines[y][x+1:]]+lines[y+1:], x, y) if x < len(lines[y])-1 else (lines[:y]+[lines[y][:-1]+lines[y+1]]+lines[y+2:], x, y) if y < len(lines)-1 else (lines, x, y))}
 
    try:
       while True:
